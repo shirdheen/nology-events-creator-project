@@ -1,6 +1,7 @@
 package com.shirdheen.events_creator.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
@@ -17,6 +18,26 @@ import lombok.RequiredArgsConstructor;
 public class EventService {
 
     private final EventRepository eventRepository;
+
+    public List<EventDTO> getEvents(String label, String location) {
+        List<Event> events;
+
+        if (label != null) {
+            events = eventRepository.findByLabelsContainingIgnoreCase(label);
+        } else if (location != null) {
+            events = eventRepository.findByLocationIgnoreCase(location);
+        } else {
+            events = eventRepository.findAll();
+        }
+
+        return events.stream().map(this::mapToDTO).toList();
+    }
+
+    public EventDTO getEventById(Long id) {
+        Event event = eventRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Event not found with id " + id));
+
+        return mapToDTO(event);
+    }
 
     public EventDTO createEvent(EventRequest request) {
         Event event = Event.builder().title(request.getTitle()).description(request.getDescription())
@@ -40,6 +61,13 @@ public class EventService {
         event.setLabels(request.getLabels());
 
         return mapToDTO(eventRepository.save(event));
+    }
+
+    public void deleteEvent(Long id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Event not found with id " + id));
+
+        eventRepository.delete(event);
     }
 
     private EventDTO mapToDTO(Event event) {
