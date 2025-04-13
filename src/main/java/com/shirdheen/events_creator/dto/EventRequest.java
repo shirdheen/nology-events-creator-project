@@ -26,10 +26,13 @@ public class EventRequest {
     @Size(max = 500, message = "Description must be under 500 characters")
     private String description;
 
-    @NotNull(message = "Event date and time is required")
-    @Future(message = "Event date must be in the future")
-    private LocalDateTime date;
+    @NotNull(message = "Start date is required")
+    private LocalDateTime startDate;
 
+    @NotNull(message = "End date is required")
+    @Future(message = "End date must be in the future")
+    private LocalDateTime endDate;
+    
     @NotBlank(message = "Location is required")
     private String location;
 

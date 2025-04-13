@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -38,8 +39,12 @@ public class Event {
     @Size(max = 500)
     private String description;
 
-    @NotNull(message = "Date and time are required")
-    private LocalDateTime date;
+    @NotNull(message = "Start date is required")
+    private LocalDateTime startDate;
+
+    @NotNull(message = "End date is required")
+    @Future(message = "End date must be in the future")
+    private LocalDateTime endDate;
 
     @NotBlank(message = "Location is required")
     private String location;

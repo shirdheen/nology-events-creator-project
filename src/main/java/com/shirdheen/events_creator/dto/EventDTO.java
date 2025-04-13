@@ -18,7 +18,8 @@ public class EventDTO {
     private Long id;
     private String title;
     private String description;
-    private LocalDateTime date;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private String location;
     private List<String> labels;
 }
