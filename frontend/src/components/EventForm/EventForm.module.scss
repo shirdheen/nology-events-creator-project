@@ -1,0 +1,54 @@
+@use "../../styles/palette" as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  input,
+  textarea,
+  button {
+    font-family: inherit;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: $may-day;
+    box-shadow: 0 0 0 2px rgba($may-day, 0.2);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  button {
+    background-color: $may-day;
+    color: $brilliance;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2 ease;
+
+    &:hover {
+      background-color: darken($may-day, 10%);
+    }
+  }
+
+  .errorList {
+    color: $pompelmo;
+    font-size: 0.9rem;
+    padding: 0;
+    margin-bottom: 0.5rem;
+
+    li {
+      margin-left: 1.2rem;
+      list-style: disc;
+    }
+  }
+}

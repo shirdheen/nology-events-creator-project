@@ -1,0 +1,257 @@
+@use "../../styles/palette" as *;
+@use "../../styles/breakpoints" as *;
+
+.calendar {
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem auto;
+  background-color: lightgoldenrodyellow;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: "DM Sans";
+  color: $black-violet;
+  @media (max-width: $breakpoint-md) {
+    padding: 1rem;
+    max-width: 400px;
+  }
+  @media (max-width: $breakpoint-sm) {
+    padding: 0.5rem;
+    max-width: 300px;
+  }
+}
+
+.header {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navGroup {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    @media (max-width: $breakpoint-md) {
+      position: static;
+      transform: none;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 0.5rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      background-color: $may-day;
+      color: $brilliance;
+      border: none;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+
+      @media (max-width: $breakpoint-sm) {
+        font-size: 0.9rem;
+        padding: 0.4rem;
+      }
+
+      &:hover {
+        background-color: darken($may-day, 10%);
+      }
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin: 0;
+      color: $black-violet;
+
+      @media (max-width: $breakpoint-sm) {
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
+.todayWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+
+  .todayButton {
+    margin: 0.75rem;
+    padding: 0.5rem 1rem;
+    background-color: $may-day;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    @media (max-width: $breakpoint-sm) {
+      padding: 0.4rem 0.8rem;
+    }
+
+    &:hover {
+      background-color: darken($may-day, 10%);
+    }
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.dayLabel {
+  font-weight: bold;
+  text-align: center;
+  color: $black-violet;
+}
+
+.dayCell {
+  height: 60px;
+  background-color: $sea-lavender;
+  text-align: center;
+  line-height: 60px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2 ease;
+
+  &:hover {
+    background-color: $dynamic-yellow;
+  }
+}
+
+.today {
+  background-color: $pompelmo !important;
+  color: $brilliance;
+  font-weight: bold;
+}
+
+.viewToggle {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+
+  button {
+    padding: 0.4rem 0.8rem;
+    min-width: 80px;
+    border: none;
+    background-color: $may-day;
+    color: $brilliance;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &.active {
+      background-color: $pompelmo;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: 0.85rem;
+      padding: 0.3rem 0.6rem;
+    }
+  }
+}
+
+.weekGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-top: 1rem;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+.weekDayCell {
+  background-color: $sea-lavender;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $dynamic-yellow;
+  }
+}
+
+.weekDayLabel {
+  font-weight: bold;
+  color: $black-violet;
+  margin-bottom: 0.3rem;
+}
+
+.blankCell {
+  background-color: gray;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.overflowDay {
+  opacity: 0.6;
+}
+
+.dayView {
+  padding: 1rem;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.dayTitle {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: $black-violet;
+  font-size: 1.3rem;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.timeSlot {
+  display: flex;
+  align-items: flex-start;
+  border: 1px solid #e0e0e0;
+  padding: 0.75rem;
+  border-radius: 6px;
+  background-color: $brilliance;
+  min-height: 60px;
+}
+
+.timeLabel {
+  width: 60px;
+  font-weight: bold;
+  color: $black-violet;
+  font-size: 0.9rem;
+}
+
+.slotContent {
+  flex: 1;
+  border-left: 1px solid #ddd;
+  margin-left: 0.5rem;
+  padding-left: 0.75rem;
+}
+
+.placeholderText {
+  color: #aaa;
+  font-size: italic;
+  font-size: 0.9rem;
+}
