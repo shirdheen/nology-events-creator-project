@@ -121,9 +121,10 @@ const Calendar: React.FC = () => {
           month={month}
           year={year}
           onDayClick={(day) => {
-            const date = new Date(year, month, day);
+            const date = new Date(year, month, day, 12);
             setSelectedDate(date);
           }}
+          events={events}
         />
       )}
       {viewMode === "week" && (

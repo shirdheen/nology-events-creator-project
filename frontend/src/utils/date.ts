@@ -28,3 +28,7 @@ export function getWeekDatesWithMeta(
     return { date, isOverflow };
   });
 }
+
+export const formatDateKey = (date: Date | string) => {
+  return new Date(date).toISOString().split("T")[0];
+};
