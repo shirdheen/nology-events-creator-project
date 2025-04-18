@@ -8,6 +8,7 @@ import DayView from "../views/DayView";
 import EventForm from "../EventForm/EventForm";
 import { Event } from "../../types/Event";
 import { createEvent, fetchEvents } from "../../api/eventService";
+import EventDetailsModal from "../EventDetailsModal/EventDetailsModal";
 
 const daysOfWeek = ["Sun", "Mon", "Tues", "Wed", "Thu", "Fri", "Sat"]; // To show in the calendar header row
 // Starts with "Sun" (index 0) since JS Date.getDay() treats Sunday as 0
@@ -19,7 +20,7 @@ const Calendar: React.FC = () => {
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("month");
-
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
 
   const {
@@ -125,6 +126,7 @@ const Calendar: React.FC = () => {
             setSelectedDate(date);
           }}
           events={events}
+          onEventClick={(event) => setSelectedEvent(event)}
         />
       )}
       {viewMode === "week" && (
@@ -154,6 +156,11 @@ const Calendar: React.FC = () => {
           />
         )}
       </Modal>
+      <EventDetailsModal
+        isOpen={selectedEvent !== null}
+        event={selectedEvent}
+        onClose={() => setSelectedEvent(null)}
+      />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React from "react";
 import styles from "../Calendar/Calendar.module.scss";
 import { formatDateKey } from "../../utils/date";
 import { Event } from "../../types/Event";
+import EventCard from "../EventCard/EventCard";
 
 interface MonthViewProps {
   daysOfWeek: string[];
@@ -11,6 +12,7 @@ interface MonthViewProps {
   year: number;
   onDayClick: (day: number) => void;
   events: Event[];
+  onEventClick: (event: Event) => void;
 }
 
 const MonthView: React.FC<MonthViewProps> = ({
@@ -21,6 +23,7 @@ const MonthView: React.FC<MonthViewProps> = ({
   year,
   onDayClick,
   events,
+  onEventClick,
 }) => {
   const getEventsForDay = (day: number) => {
     const dateKey = formatDateKey(new Date(year, month, day));
@@ -65,9 +68,11 @@ const MonthView: React.FC<MonthViewProps> = ({
               <div className={styles.dayNumber}>{day}</div>
 
               {dayEvents.map((event) => (
-                <div key={event.id} className={styles.eventCard}>
-                  {event.title}
-                </div>
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  onClick={onEventClick}
+                />
               ))}
             </div>
           );

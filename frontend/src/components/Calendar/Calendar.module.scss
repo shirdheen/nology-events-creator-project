@@ -2,8 +2,8 @@
 @use "../../styles/breakpoints" as *;
 
 .calendar {
-  width: 100%;
-  max-width: 800px;
+  width: 80%;
+  // max-width: 800px;
   margin: 2rem auto;
   background-color: lightgoldenrodyellow;
   padding: 2rem;
@@ -128,7 +128,6 @@
   color: $black-violet;
   margin: 0;
   padding: 0.25rem;
-  background-color: transparent;
 }
 
 .dayCell {
@@ -143,8 +142,13 @@
   justify-content: flex-start;
   align-items: flex-start;
   transition: background-color 0.2 ease;
-  overflow: hidden;
+  overflow-y: auto;
   position: relative;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
 
   &:hover {
     background-color: $dynamic-yellow;

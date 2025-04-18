@@ -1,0 +1,54 @@
+@use "../../styles/palette" as *;
+
+.eventCard {
+  background-color: $may-day;
+  color: $brilliance;
+  border-radius: 6px;
+  padding: 0.4rem;
+  margin-top: 0.3rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 0.8rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  width: 100%;
+  box-sizing: border-box;
+
+  &:hover {
+    background-color: darken($may-day, 10%);
+  }
+}
+
+.labels {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  margin-bottom: 0.2rem;
+}
+
+.labelTag {
+  background-color: lightgray;
+  padding: 0.1rem 0.3rem;
+  border-radius: 8px;
+  font-size: 0.6rem;
+  color: $black-violet;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 0.75rem;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time {
+  font-size: 0.7rem;
+  opacity: 0.85;
+  line-height: 1;
+}
