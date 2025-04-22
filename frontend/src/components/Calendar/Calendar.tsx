@@ -14,6 +14,7 @@ import {
   deleteEvent as deleteEventAPI,
 } from "../../api/eventService";
 import EventDetailsModal from "../EventDetailsModal/EventDetailsModal";
+import EventFilter from "../EventFilter/EventFilter";
 
 const daysOfWeek = ["Sun", "Mon", "Tues", "Wed", "Thu", "Fri", "Sat"]; // To show in the calendar header row
 // Starts with "Sun" (index 0) since JS Date.getDay() treats Sunday as 0
@@ -29,6 +30,10 @@ const Calendar: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [allEvents, setAllEvents] = useState<Event[]>([]);
+
+  const [selectedLabel, setSelectedLabel] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
 
   const {
     currentDate,
@@ -45,11 +50,24 @@ const Calendar: React.FC = () => {
     goToToday,
   } = useCalendar();
 
+  const loadEvents = () => {
+    fetchEvents(selectedLabel, selectedLocation)
+      .then((fetchedEvents) => {
+        setEvents(fetchedEvents);
+        if (!selectedLabel && !selectedLocation) {
+          setAllEvents(fetchedEvents);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch events", err));
+  };
+
   useEffect(() => {
     fetchEvents()
-      .then(setEvents)
-      .catch((err) => console.error("Failed to fetch events", err));
-  }, []);
+      .then(setAllEvents)
+      .catch((err) => console.error("Failed to fetch all events", err));
+
+    loadEvents();
+  }, [selectedLabel, selectedLocation]);
 
   const handlePrev = () => {
     if (viewMode === "month") goToPrevMonth();
@@ -116,6 +134,15 @@ const Calendar: React.FC = () => {
           Today
         </button>
       </div>
+
+      {/* Event filter */}
+      <EventFilter
+        selectedLabel={selectedLabel}
+        selectedLocation={selectedLocation}
+        onLabelChange={setSelectedLabel}
+        onLocationChange={setSelectedLocation}
+        labels={[...new Set(allEvents.flatMap((e) => e.labels || []))]}
+      />
 
       {/* View mode toggle */}
       <div className={styles.viewToggle}>
