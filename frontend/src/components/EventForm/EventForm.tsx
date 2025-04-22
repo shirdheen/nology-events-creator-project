@@ -5,18 +5,27 @@ import styles from "./EventForm.module.scss";
 interface EventFormProps {
   defaultDate: Date;
   onSubmit: (eventData: Omit<Event, "id">) => void;
+  defaultEvent?: Event;
 }
 
-const EventForm: React.FC<EventFormProps> = ({ defaultDate, onSubmit }) => {
-  const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
-  const [label, setLabel] = useState("");
-  const [description, setDescription] = useState("");
+const EventForm: React.FC<EventFormProps> = ({
+  defaultDate,
+  onSubmit,
+  defaultEvent,
+}) => {
+  const [title, setTitle] = useState(defaultEvent?.title || "");
+  const [location, setLocation] = useState(defaultEvent?.location || "");
+  const [labelInput, setLabelInput] = useState(
+    defaultEvent?.labels.join(", ") || ""
+  );
+  const [description, setDescription] = useState(
+    defaultEvent?.description || ""
+  );
   const [startDate, setStartDate] = useState(
-    defaultDate.toISOString().slice(0, 16)
+    defaultEvent?.startDate || defaultDate.toISOString().slice(0, 16)
   );
   const [endDate, setEndDate] = useState(
-    defaultDate.toISOString().slice(0, 16)
+    defaultEvent?.endDate || defaultDate.toISOString().slice(0, 16)
   );
 
   const [errors, setErrors] = useState<string[]>([]);
@@ -44,7 +53,10 @@ const EventForm: React.FC<EventFormProps> = ({ defaultDate, onSubmit }) => {
       title,
       description,
       location,
-      labels: label ? [label] : [],
+      labels: labelInput
+        .split(",")
+        .map((l) => l.trim())
+        .filter((l) => l.length > 0),
       startDate,
       endDate,
     };
@@ -54,7 +66,7 @@ const EventForm: React.FC<EventFormProps> = ({ defaultDate, onSubmit }) => {
     setTitle("");
     setDescription("");
     setLocation("");
-    setLabel("");
+    setLabelInput("");
     setErrors([]);
   };
 
@@ -100,8 +112,8 @@ const EventForm: React.FC<EventFormProps> = ({ defaultDate, onSubmit }) => {
       <input
         type="text"
         placeholder="Label"
-        value={label}
-        onChange={(e) => setLabel(e.target.value)}
+        value={labelInput}
+        onChange={(e) => setLabelInput(e.target.value)}
       />
 
       <textarea

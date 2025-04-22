@@ -7,7 +7,12 @@ import WeekView from "../views/WeekView";
 import DayView from "../views/DayView";
 import EventForm from "../EventForm/EventForm";
 import { Event } from "../../types/Event";
-import { createEvent, fetchEvents } from "../../api/eventService";
+import {
+  createEvent,
+  fetchEvents,
+  updateEvent as updateEventAPI,
+  deleteEvent as deleteEventAPI,
+} from "../../api/eventService";
 import EventDetailsModal from "../EventDetailsModal/EventDetailsModal";
 
 const daysOfWeek = ["Sun", "Mon", "Tues", "Wed", "Thu", "Fri", "Sat"]; // To show in the calendar header row
@@ -22,6 +27,8 @@ const Calendar: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("month");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   const {
     currentDate,
@@ -42,7 +49,7 @@ const Calendar: React.FC = () => {
     fetchEvents()
       .then(setEvents)
       .catch((err) => console.error("Failed to fetch events", err));
-  });
+  }, []);
 
   const handlePrev = () => {
     if (viewMode === "month") goToPrevMonth();
@@ -66,6 +73,25 @@ const Calendar: React.FC = () => {
       setEvents((prev) => [...prev, savedEvent]);
     } catch (err) {
       console.error("Failed to add event:", err);
+    }
+  };
+
+  const updateEvent = async (id: string | number, updated: Partial<Event>) => {
+    try {
+      const saved = await updateEventAPI(id, updated);
+      setEvents((prev) => prev.map((e) => (e.id === saved.id ? saved : e)));
+    } catch (err) {
+      console.error("Failed to update event:", err);
+    }
+  };
+
+  const deleteEvent = async (eventId: string) => {
+    try {
+      await deleteEventAPI(eventId);
+      setEvents((prev) => prev.filter((e) => e.id !== eventId));
+      setSelectedEvent(null);
+    } catch (err) {
+      console.error("Failed to delete event:", err);
     }
   };
 
@@ -124,6 +150,9 @@ const Calendar: React.FC = () => {
           onDayClick={(day) => {
             const date = new Date(year, month, day, 12);
             setSelectedDate(date);
+            setEditMode(false);
+            setIsFormOpen(true);
+            setSelectedEvent(null);
           }}
           events={events}
           onEventClick={(event) => setSelectedEvent(event)}
@@ -137,29 +166,50 @@ const Calendar: React.FC = () => {
           }}
         />
       )}
-      {viewMode === "day" && <DayView currentDate={currentDate} />}
+      {viewMode === "day" && (
+        <DayView
+          currentDate={currentDate}
+          events={events}
+          onEventClick={setSelectedEvent}
+        />
+      )}
 
       <Modal
-        isOpen={selectedDate !== null}
-        onClose={() => setSelectedDate(null)}
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        zIndex={1100}
       >
-        <h3>Add New Event</h3>
-        {selectedDate && (
+        <h3>{editMode ? "Edit Event" : "Add New Event"}</h3>
+        {isFormOpen && (selectedDate || selectedEvent) && (
           <EventForm
-            defaultDate={selectedDate}
+            defaultDate={selectedDate || new Date()}
+            defaultEvent={editMode ? selectedEvent ?? undefined : undefined}
             onSubmit={
               (event) => {
-                addEvent(event);
-                setSelectedDate(null);
+                if (editMode && selectedEvent) {
+                  updateEvent(selectedEvent.id, event);
+                } else {
+                  addEvent(event);
+                }
+                setIsFormOpen(false);
+                setSelectedEvent(null);
+                setEditMode(false);
               } // Close modal
             }
           />
         )}
       </Modal>
       <EventDetailsModal
-        isOpen={selectedEvent !== null}
+        isOpen={selectedEvent !== null && !isFormOpen}
         event={selectedEvent}
         onClose={() => setSelectedEvent(null)}
+        onEdit={(event) => {
+          setEditMode(true);
+          setSelectedEvent(event);
+          setSelectedDate(new Date(event.startDate));
+          setIsFormOpen(true);
+        }}
+        onDelete={(event) => deleteEvent(event.id)}
       />
     </div>
   );

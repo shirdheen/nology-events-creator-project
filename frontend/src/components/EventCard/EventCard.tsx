@@ -5,9 +5,16 @@ import styles from "./EventCard.module.scss";
 interface EventCardProps {
   event: Event;
   onClick: (event: Event) => void;
+  className?: string;
+  timeRange?: string;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
+const EventCard: React.FC<EventCardProps> = ({
+  event,
+  onClick,
+  className,
+  timeRange,
+}) => {
   const startTime = new Date(event.startDate).toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
@@ -15,7 +22,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
 
   return (
     <div
-      className={styles.eventCard}
+      className={`${styles.eventCard} ${className || ""}`}
       onClick={(e) => {
         e.stopPropagation();
         onClick(event);
@@ -34,7 +41,13 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
       </div>
 
       <div className={styles.title}>{event.title}</div>
-      <div className={styles.time}>{startTime}</div>
+      <div className={styles.time}>
+        {timeRange ||
+          new Date(event.startDate).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+      </div>
     </div>
   );
 };

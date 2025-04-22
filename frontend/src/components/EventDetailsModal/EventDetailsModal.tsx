@@ -7,9 +7,17 @@ interface Props {
   event: Event | null;
   isOpen: boolean;
   onClose: () => void;
+  onEdit: (event: Event) => void;
+  onDelete: (event: Event) => void;
 }
 
-const EventDetailsModal: React.FC<Props> = ({ event, isOpen, onClose }) => {
+const EventDetailsModal: React.FC<Props> = ({
+  event,
+  isOpen,
+  onClose,
+  onEdit,
+  onDelete,
+}) => {
   const [timeRemaining, setTimeRemaining] = useState("");
 
   useEffect(() => {
@@ -71,6 +79,21 @@ const EventDetailsModal: React.FC<Props> = ({ event, isOpen, onClose }) => {
 
         <div className={styles.countdown}>
           <strong>Countdown:</strong> {timeRemaining}
+        </div>
+        <div className={styles.footer}>
+          <button className={styles.editButton} onClick={() => onEdit(event)}>
+            Edit
+          </button>
+          <button
+            className={styles.deleteButton}
+            onClick={() => {
+              if (confirm("Are you sure you want to delete this event?")) {
+                onDelete(event);
+              }
+            }}
+          >
+            Delete
+          </button>
         </div>
       </div>
     </Modal>

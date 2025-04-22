@@ -3,7 +3,7 @@ import { ModalProps } from "../../types/modal";
 import styles from "./Modal.module.scss";
 import { getFocusableElements } from "../../utils/focus";
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, zIndex }) => {
   const modalRef = useRef<HTMLDivElement>(null); // Creates a ref that can be attached to the modal container; will either be a DOM element or null
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -53,7 +53,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null; // Ensures that the modal DOM doesn't exist when it's closed
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay} style={{ zIndex }} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button className={styles.closeButton} onClick={onClose}>
           &times;
