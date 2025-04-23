@@ -18,7 +18,7 @@ const DayView: React.FC<DayViewProps> = ({
   events,
   onEventClick,
 }) => {
-  const slotRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const slotRefs = useRef<(HTMLDivElement | null)[]>([]); // To get vertical position on the screen
   const [refsReady, setRefsReady] = useState(false);
 
   const dayEvents = events.filter(
@@ -28,7 +28,7 @@ const DayView: React.FC<DayViewProps> = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setRefsReady(true);
-    }, 0);
+    }, 0); // Setting this up to wait until all refs are populated before calculating and rendering events
     return () => clearTimeout(timer);
   }, [currentDate, events]);
 
@@ -68,14 +68,8 @@ const DayView: React.FC<DayViewProps> = ({
 
             const startHour = startDate.getHours();
             const startMinute = startDate.getMinutes();
-            const endHour = endDate.getHours();
-            const endMinute = endDate.getMinutes();
 
-            const totalStart = startHour + startMinute / 60;
-            const totalEnd = endHour + endMinute / 60;
-            const duration = totalEnd - totalStart;
-
-            const baseTop = slotRefs.current[startHour]?.offsetTop ?? 0;
+            const baseTop = slotRefs.current[startHour]?.offsetTop ?? 0; // Gives pixel offset when the event starts
             const minuteOffset = (startMinute / 60) * slotHeight;
             const top = baseTop + minuteOffset;
             const durationInMinutes =

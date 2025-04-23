@@ -122,7 +122,9 @@ const EventForm: React.FC<EventFormProps> = ({
         onChange={(e) => setDescription(e.target.value)}
       />
 
-      <button type="submit">Add Event</button>
+      <button type="submit">
+        {defaultEvent ? "Save Changes" : "Add Event"}
+      </button>
     </form>
   );
 };

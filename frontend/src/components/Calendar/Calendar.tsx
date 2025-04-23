@@ -89,6 +89,7 @@ const Calendar: React.FC = () => {
     try {
       const savedEvent = await createEvent(eventData);
       setEvents((prev) => [...prev, savedEvent]);
+      setAllEvents((prev) => [...prev, savedEvent]);
     } catch (err) {
       console.error("Failed to add event:", err);
     }
@@ -136,13 +137,15 @@ const Calendar: React.FC = () => {
       </div>
 
       {/* Event filter */}
-      <EventFilter
-        selectedLabel={selectedLabel}
-        selectedLocation={selectedLocation}
-        onLabelChange={setSelectedLabel}
-        onLocationChange={setSelectedLocation}
-        labels={[...new Set(allEvents.flatMap((e) => e.labels || []))]}
-      />
+      {viewMode === "month" && (
+        <EventFilter
+          selectedLabel={selectedLabel}
+          selectedLocation={selectedLocation}
+          onLabelChange={setSelectedLabel}
+          onLocationChange={setSelectedLocation}
+          labels={[...new Set(allEvents.flatMap((e) => e.labels || []))]}
+        />
+      )}
 
       {/* View mode toggle */}
       <div className={styles.viewToggle}>
