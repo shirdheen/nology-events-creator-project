@@ -5,13 +5,22 @@ import {
   getWeekDatesWithMeta,
 } from "../../utils/date";
 import styles from "../Calendar/Calendar.module.scss";
+import { Event } from "../../types/Event";
+import EventCard from "../EventCard/EventCard";
 
 interface WeekViewProps {
   currentDate: Date; // Reference date used to calculate the week
   onDayClick: (date: Date) => void; // Callback triggered when a day is clicked, passing the selected Date
+  events: Event[];
+  onEventClick: (event: Event) => void;
 }
 
-const WeekView: React.FC<WeekViewProps> = ({ currentDate, onDayClick }) => {
+const WeekView: React.FC<WeekViewProps> = ({
+  currentDate,
+  onDayClick,
+  events,
+  onEventClick,
+}) => {
   const startOfWeek = getStartOfWeek(currentDate); // Returns the Sunday of the week the currentDate falls in
   const visibleMonth = getVisibleMonthForWeek(startOfWeek);
 
@@ -32,20 +41,36 @@ const WeekView: React.FC<WeekViewProps> = ({ currentDate, onDayClick }) => {
         const isToday =
           isSameDay(date, today) && date.getMonth() === currentDate.getMonth(); // Check if this day is "today"
 
+        const dayEvents = events.filter(
+          (event) =>
+            new Date(event.startDate).toDateString() === date.toDateString()
+        );
+
         return (
           <div
             key={date.toISOString()} // Ensures each cell has a unique key
             className={`${styles.weekDayCell} ${
               isOverflow ? styles.overflowDay : ""
             } ${isToday ? styles.today : ""}`}
-            onClick={() => onDayClick(date)} // Communicates clicked day back to the parent (Calendar component)
           >
-            <div className={styles.weekDayLabel}>
-              {/* Shows the abbreviated weekday name */}
-              {date.toLocaleDateString("default", { weekday: "short" })}
+            <div className={styles.dayHeader} onClick={() => onDayClick(date)}>
+              <div className={styles.weekDayLabel}>
+                {/* Shows the abbreviated weekday name */}
+                {date.toLocaleDateString("default", { weekday: "short" })}
+              </div>
+              {/* Day number */}
+              <div className={styles.dayNumber}>{date.getDate()}</div>
             </div>
-            {/* Day number */}
-            <div>{date.getDate()}</div>
+
+            <div className={styles.dayEventsContainer}>
+              {dayEvents.map((event) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  onClick={() => onEventClick(event)}
+                />
+              ))}
+            </div>
           </div>
         );
       })}

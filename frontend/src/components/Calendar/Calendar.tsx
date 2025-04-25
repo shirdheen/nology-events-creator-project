@@ -85,6 +85,13 @@ const Calendar: React.FC = () => {
     goToToday();
   };
 
+  const handleTimeSlotClick = (date: Date) => {
+    setSelectedDate(date);
+    setEditMode(false);
+    setIsFormOpen(true);
+    setSelectedEvent(null);
+  };
+
   const addEvent = async (eventData: Omit<Event, "id">) => {
     try {
       const savedEvent = await createEvent(eventData);
@@ -194,6 +201,8 @@ const Calendar: React.FC = () => {
           onDayClick={(date) => {
             setSelectedDate(date);
           }}
+          events={events}
+          onEventClick={(event) => setSelectedEvent(event)}
         />
       )}
       {viewMode === "day" && (
@@ -201,6 +210,7 @@ const Calendar: React.FC = () => {
           currentDate={currentDate}
           events={events}
           onEventClick={setSelectedEvent}
+          onTimeSlotClick={handleTimeSlotClick}
         />
       )}
 

@@ -8,15 +8,17 @@ interface DayViewProps {
   currentDate: Date;
   events: Event[];
   onEventClick: (event: Event) => void;
+  onTimeSlotClick: (date: Date) => void;
 }
 
 const hours = Array.from({ length: 24 }, (_, i) => i);
-const slotHeight = 80;
+const slotHeight = 82;
 
 const DayView: React.FC<DayViewProps> = ({
   currentDate,
   events,
   onEventClick,
+  onTimeSlotClick,
 }) => {
   const slotRefs = useRef<(HTMLDivElement | null)[]>([]); // To get vertical position on the screen
   const [refsReady, setRefsReady] = useState(false);
@@ -44,22 +46,31 @@ const DayView: React.FC<DayViewProps> = ({
       </h3>
 
       <div className={styles.timeline}>
-        {hours.map((hour, idx) => (
-          <div
-            key={hour}
-            className={styles.timeSlot}
-            ref={(el) => {
-              slotRefs.current[idx] = el;
-            }}
-          >
-            <span className={styles.timeLabel}>
-              {hour.toString().padStart(2, "0")}:00
-            </span>
-            <div className={styles.slotContent}>
-              {/* <span className={styles.placeholderText}>No events</span> */}
+        {hours.map((hour, idx) => {
+          const slotTime = new Date(currentDate);
+          slotTime.setHours(hour);
+          slotTime.setMinutes(0);
+          slotTime.setSeconds(0);
+          slotTime.setMilliseconds(0);
+
+          return (
+            <div
+              key={hour}
+              className={styles.timeSlot}
+              ref={(el) => {
+                slotRefs.current[idx] = el;
+              }}
+              onClick={() => onTimeSlotClick(slotTime)}
+            >
+              <span className={styles.timeLabel}>
+                {hour.toString().padStart(2, "0")}:00
+              </span>
+              <div className={styles.slotContent}>
+                {/* <span className={styles.placeholderText}>No events</span> */}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {refsReady &&
           dayEvents.map((event) => {
@@ -72,9 +83,11 @@ const DayView: React.FC<DayViewProps> = ({
             const baseTop = slotRefs.current[startHour]?.offsetTop ?? 0; // Gives pixel offset when the event starts
             const minuteOffset = (startMinute / 60) * slotHeight;
             const top = baseTop + minuteOffset;
+
             const durationInMinutes =
               (endDate.getTime() - startDate.getTime()) / 60000;
-            const height = (durationInMinutes / 60) * slotHeight;
+
+            const height = Math.round((durationInMinutes / 60) * slotHeight);
 
             const timeRange = `${startDate.toLocaleTimeString([], {
               hour: "2-digit",

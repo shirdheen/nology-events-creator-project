@@ -50,6 +50,7 @@ public class Event {
     @NotBlank(message = "Location is required")
     private String location;
 
+    // Stores that labels as a collection in a separate table called event_labels, linked to the event table via event_id
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "event_labels", joinColumns = @JoinColumn(name= "event_id"))
     @Column(name="label")

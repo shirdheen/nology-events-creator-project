@@ -3,6 +3,7 @@ package com.shirdheen.events_creator.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import com.shirdheen.events_creator.dto.EventRequest;
 import com.shirdheen.events_creator.model.Event;
 import com.shirdheen.events_creator.repository.EventRepository;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -44,9 +46,12 @@ public class EventService {
         if (!request.getEndDate().isAfter(request.getStartDate())) {
             throw new IllegalArgumentException("End date must be after start date");
         }
+
+        List<String> sanitisedLabels = sanitiseLabels(request.getLabels());
+
         Event event = Event.builder().title(request.getTitle()).description(request.getDescription())
                 .startDate(request.getStartDate()).endDate(request.getEndDate()).location(request.getLocation())
-                .labels(request.getLabels()).build();
+                .labels(sanitisedLabels).build();
 
         return mapToDTO(eventRepository.save(event));
     }
@@ -68,7 +73,7 @@ public class EventService {
         event.setStartDate(request.getStartDate());
         event.setEndDate(request.getEndDate());
         event.setLocation(request.getLocation());
-        event.setLabels(request.getLabels());
+        event.setLabels(sanitiseLabels(request.getLabels()));
 
         return mapToDTO(eventRepository.save(event));
     }
@@ -84,5 +89,12 @@ public class EventService {
         return EventDTO.builder().id(event.getId()).title(event.getTitle()).description(event.getDescription())
                 .startDate(event.getStartDate()).endDate(event.getEndDate()).location(event.getLocation())
                 .labels(event.getLabels()).build();
+    }
+
+    public List<String> sanitiseLabels(List<String> labels) {
+        if (labels == null)
+            return List.of();
+        return labels.stream().map(String::trim).filter(label -> !label.isEmpty()).distinct()
+                .collect(Collectors.toList());
     }
 }
