@@ -10,14 +10,14 @@ import EventCard from "../EventCard/EventCard";
 
 interface WeekViewProps {
   currentDate: Date; // Reference date used to calculate the week
-  onDayClick: (date: Date) => void; // Callback triggered when a day is clicked, passing the selected Date
+  onDaySlotClick: (date: Date) => void; // Callback triggered when a day is clicked, passing the selected Date
   events: Event[];
   onEventClick: (event: Event) => void;
 }
 
 const WeekView: React.FC<WeekViewProps> = ({
   currentDate,
-  onDayClick,
+  onDaySlotClick,
   events,
   onEventClick,
 }) => {
@@ -41,10 +41,23 @@ const WeekView: React.FC<WeekViewProps> = ({
         const isToday =
           isSameDay(date, today) && date.getMonth() === currentDate.getMonth(); // Check if this day is "today"
 
-        const dayEvents = events.filter(
-          (event) =>
-            new Date(event.startDate).toDateString() === date.toDateString()
-        );
+        const dayEvents = events
+          .filter((event) => {
+            const eventStart = new Date(event.startDate);
+            const eventEnd = new Date(event.endDate);
+
+            eventStart.setHours(0, 0, 0, 0);
+            eventEnd.setHours(0, 0, 0, 0);
+
+            const currentDay = new Date(date);
+            currentDay.setHours(0, 0, 0, 0);
+
+            return currentDay >= eventStart && currentDay <= eventEnd;
+          })
+          .sort(
+            (a, b) =>
+              new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+          );
 
         return (
           <div
@@ -53,7 +66,21 @@ const WeekView: React.FC<WeekViewProps> = ({
               isOverflow ? styles.overflowDay : ""
             } ${isToday ? styles.today : ""}`}
           >
-            <div className={styles.dayHeader} onClick={() => onDayClick(date)}>
+            <div
+              className={styles.dayHeader}
+              onClick={() => {
+                const safeDate = new Date(
+                  date.getFullYear(),
+                  date.getMonth(),
+                  date.getDate(),
+                  12,
+                  0,
+                  0,
+                  0
+                );
+                onDaySlotClick(safeDate);
+              }}
+            >
               <div className={styles.weekDayLabel}>
                 {/* Shows the abbreviated weekday name */}
                 {date.toLocaleDateString("default", { weekday: "short" })}
@@ -63,13 +90,22 @@ const WeekView: React.FC<WeekViewProps> = ({
             </div>
 
             <div className={styles.dayEventsContainer}>
-              {dayEvents.map((event) => (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  onClick={() => onEventClick(event)}
-                />
-              ))}
+              {dayEvents.map((event) => {
+                const eventStart = new Date(event.startDate);
+                const isContinuation =
+                  eventStart.getFullYear() !== date.getFullYear() ||
+                  eventStart.getMonth() !== date.getMonth() ||
+                  eventStart.getDate() !== date.getDate();
+
+                return (
+                  <EventCard
+                    key={`${event.id}-${date.toDateString()}`}
+                    event={event}
+                    onClick={() => onEventClick(event)}
+                    showContinuousBadge={isContinuation}
+                  />
+                );
+              })}
             </div>
           </div>
         );

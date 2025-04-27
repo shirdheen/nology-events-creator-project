@@ -23,9 +23,17 @@ const DayView: React.FC<DayViewProps> = ({
   const slotRefs = useRef<(HTMLDivElement | null)[]>([]); // To get vertical position on the screen
   const [refsReady, setRefsReady] = useState(false);
 
-  const dayEvents = events.filter(
-    (event) => formatDateKey(event.startDate) === formatDateKey(currentDate)
-  );
+  const dayStart = new Date(currentDate);
+  dayStart.setHours(0, 0, 0, 0);
+
+  const dayEnd = new Date(currentDate);
+  dayEnd.setHours(23, 59, 59, 999);
+
+  const dayEvents = events.filter((event) => {
+    const eventStart = new Date(event.startDate);
+    const eventEnd = new Date(event.endDate);
+    return eventEnd >= dayStart && eventStart <= dayEnd;
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -48,11 +56,7 @@ const DayView: React.FC<DayViewProps> = ({
       <div className={styles.timeline}>
         {hours.map((hour, idx) => {
           const slotTime = new Date(currentDate);
-          slotTime.setHours(hour);
-          slotTime.setMinutes(0);
-          slotTime.setSeconds(0);
-          slotTime.setMilliseconds(0);
-
+          slotTime.setHours(hour, 0, 0, 0);
           return (
             <div
               key={hour}
@@ -74,32 +78,39 @@ const DayView: React.FC<DayViewProps> = ({
 
         {refsReady &&
           dayEvents.map((event) => {
-            const startDate = new Date(event.startDate);
-            const endDate = new Date(event.endDate);
+            const eventStartRaw = new Date(event.startDate);
+            const eventEndRaw = new Date(event.endDate);
 
-            const startHour = startDate.getHours();
-            const startMinute = startDate.getMinutes();
+            const eventStart =
+              eventStartRaw < dayStart ? dayStart : eventStartRaw;
+            const eventEnd = eventEndRaw > dayEnd ? dayEnd : eventEndRaw;
+
+            const startHour = eventStart.getHours();
+            const startMinute = eventStart.getMinutes();
 
             const baseTop = slotRefs.current[startHour]?.offsetTop ?? 0; // Gives pixel offset when the event starts
             const minuteOffset = (startMinute / 60) * slotHeight;
             const top = baseTop + minuteOffset;
 
             const durationInMinutes =
-              (endDate.getTime() - startDate.getTime()) / 60000;
+              (eventEnd.getTime() - eventStart.getTime()) / 60000;
 
-            const height = Math.round((durationInMinutes / 60) * slotHeight);
+            const height = Math.max(
+              Math.round((durationInMinutes / 60) * slotHeight),
+              10
+            );
 
-            const timeRange = `${startDate.toLocaleTimeString([], {
+            const timeRange = `${eventStart.toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
-            })} - ${endDate.toLocaleTimeString([], {
+            })} - ${eventEnd.toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             })}`;
 
             console.log(
               `[${event.title}]`,
-              `start: ${startDate.toString()}`,
+              `start: ${eventStart.toString()}`,
               `→ startHour: ${startHour}`,
               `→ top: ${top}px`,
               `→ height: ${height}px`

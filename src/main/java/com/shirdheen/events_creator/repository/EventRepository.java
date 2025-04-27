@@ -10,6 +10,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByLabelsContainingIgnoreCase(String label);
 
+    List<Event> findByLabelsContainingIgnoreCaseAndLocationIgnoreCase(String label, String location);
+
     List<Event> findByLocationIgnoreCase(String location);
     
 }

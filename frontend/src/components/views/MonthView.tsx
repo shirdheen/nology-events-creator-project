@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "../Calendar/Calendar.module.scss";
-import { formatDateKey } from "../../utils/date";
 import { Event } from "../../types/Event";
 import EventCard from "../EventCard/EventCard";
 
@@ -26,8 +25,22 @@ const MonthView: React.FC<MonthViewProps> = ({
   onEventClick,
 }) => {
   const getEventsForDay = (day: number) => {
-    const dateKey = formatDateKey(new Date(year, month, day));
-    return events.filter((e) => formatDateKey(e.startDate) === dateKey);
+    const currentDate = new Date(year, month, day);
+    currentDate.setHours(0, 0, 0, 0);
+
+    return events
+      .filter((event) => {
+        const start = new Date(event.startDate);
+        const end = new Date(event.endDate);
+        start.setHours(0, 0, 0, 0);
+        end.setHours(0, 0, 0, 0);
+
+        return currentDate >= start && currentDate <= end;
+      })
+      .sort(
+        (a, b) =>
+          new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+      );
   };
 
   const today = new Date();
@@ -67,13 +80,22 @@ const MonthView: React.FC<MonthViewProps> = ({
             >
               <div className={styles.dayNumber}>{day}</div>
 
-              {dayEvents.map((event) => (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  onClick={onEventClick}
-                />
-              ))}
+              {dayEvents.map((event) => {
+                const eventStartDate = new Date(event.startDate);
+                const isContinuation =
+                  eventStartDate.getDate() !== day ||
+                  eventStartDate.getMonth() !== month ||
+                  eventStartDate.getFullYear() !== year;
+
+                return (
+                  <EventCard
+                    key={`${event.id}-${day}`}
+                    event={event}
+                    onClick={onEventClick}
+                    showContinuousBadge={isContinuation}
+                  />
+                );
+              })}
             </div>
           );
         })}

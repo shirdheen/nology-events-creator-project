@@ -198,8 +198,11 @@ const Calendar: React.FC = () => {
       {viewMode === "week" && (
         <WeekView
           currentDate={currentDate}
-          onDayClick={(date) => {
+          onDaySlotClick={(date) => {
             setSelectedDate(date);
+            setIsFormOpen(true);
+            setEditMode(false);
+            setSelectedEvent(null);
           }}
           events={events}
           onEventClick={(event) => setSelectedEvent(event)}

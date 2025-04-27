@@ -7,11 +7,20 @@ export const fetchEvents = async (
   location?: string
 ): Promise<Event[]> => {
   const params = new URLSearchParams();
-  if (label) params.append("label", label);
-  if (location) params.append("location", location);
+  if (label) {
+    params.append("label", label);
+  }
+  if (location) {
+    params.append("location", location);
+  }
 
-  const res = await fetch(`${API_BASE}?${params.toString()}`);
-  if (!res.ok) throw new Error("Failed to fetch events");
+  const url = params.toString ? `${API_BASE}?${params.toString()}` : API_BASE;
+
+  const res = await fetch(url);
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Failed to fetch events");
+  }
   return res.json();
 };
 

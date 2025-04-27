@@ -12,7 +12,6 @@ import com.shirdheen.events_creator.dto.EventRequest;
 import com.shirdheen.events_creator.model.Event;
 import com.shirdheen.events_creator.repository.EventRepository;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,7 +23,9 @@ public class EventService {
     public List<EventDTO> getEvents(String label, String location) {
         List<Event> events;
 
-        if (label != null) {
+        if (label != null && location != null) {
+            events = eventRepository.findByLabelsContainingIgnoreCaseAndLocationIgnoreCase(label, location);
+        } else if (label != null) {
             events = eventRepository.findByLabelsContainingIgnoreCase(label);
         } else if (location != null) {
             events = eventRepository.findByLocationIgnoreCase(location);

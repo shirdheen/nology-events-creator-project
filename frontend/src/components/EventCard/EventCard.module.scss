@@ -53,3 +53,12 @@
   opacity: 0.85;
   line-height: 1;
 }
+
+.continuationBadge {
+  background-color: $dynamic-yellow;
+  color: $black-violet;
+  font-size: 0.5rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}

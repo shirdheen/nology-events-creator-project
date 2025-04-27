@@ -7,6 +7,7 @@ interface EventCardProps {
   onClick: (event: Event) => void;
   className?: string;
   timeRange?: string;
+  showContinuousBadge?: boolean;
 }
 
 const EventCard: React.FC<EventCardProps> = ({
@@ -14,6 +15,7 @@ const EventCard: React.FC<EventCardProps> = ({
   onClick,
   className,
   timeRange,
+  showContinuousBadge,
 }) => {
   const startTime = new Date(event.startDate).toLocaleTimeString([], {
     hour: "2-digit",
@@ -48,6 +50,11 @@ const EventCard: React.FC<EventCardProps> = ({
             minute: "2-digit",
           })}
       </div>
+      {showContinuousBadge && (
+        <div className={styles.continuationBadge}>
+          Ends at {new Date(event.endDate).toLocaleTimeString()}
+        </div>
+      )}
     </div>
   );
 };
