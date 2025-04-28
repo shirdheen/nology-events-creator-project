@@ -52,7 +52,14 @@ const EventCard: React.FC<EventCardProps> = ({
       </div>
       {showContinuousBadge && (
         <div className={styles.continuationBadge}>
-          Ends at {new Date(event.endDate).toLocaleTimeString()}
+          Ends at{" "}
+          {new Date(event.endDate).toLocaleString("default", {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          })}
         </div>
       )}
     </div>
