@@ -69,7 +69,7 @@ class EventControllerTest {
     @DisplayName("PUT /events/{id} should update an event")
     void updateEvent() throws Exception {
         EventRequest updatedRequest = new EventRequest("Updated Title", "Updated description",
-                LocalDateTime.of(2025, 5, 1, 9, 0), LocalDateTime.of(2025, 5, 1, 10, 0), "Sydney",
+                LocalDateTime.of(2025, 6, 1, 9, 0), LocalDateTime.of(2025, 6, 1, 10, 0), "Sydney",
                 List.of("Work", "Important"));
         
         EventDTO updatedEvent = EventDTO.builder().id(1L).title(updatedRequest.getTitle()).description(updatedRequest.getDescription()).startDate(updatedRequest.getStartDate()).endDate(updatedRequest.getEndDate()).location(updatedRequest.getLocation()).labels(updatedRequest.getLabels()).build();

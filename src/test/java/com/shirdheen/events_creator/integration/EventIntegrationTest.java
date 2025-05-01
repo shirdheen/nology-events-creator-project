@@ -60,11 +60,11 @@ class EventIntegrationTest {
 
     @Test
     void shouldUpdateEvent() throws Exception {
-        Event event = Event.builder().title("Old Title").description("Old Description").startDate(LocalDateTime.of(2025,5,1,10,0)).endDate(LocalDateTime.of(2025, 5, 1, 11, 0)).location("Sydney").labels(List.of("Work")).build();
+        Event event = Event.builder().title("Old Title").description("Old Description").startDate(LocalDateTime.of(2025,6,1,10,0)).endDate(LocalDateTime.of(2025, 6, 1, 11, 0)).location("Sydney").labels(List.of("Work")).build();
 
         event = eventRepository.save(event);
 
-        EventRequest updateRequest = new EventRequest("New Title", "New Description", LocalDateTime.of(2025, 5, 1, 12, 0), LocalDateTime.of(2025, 5, 1, 13, 0), "Brisbane", List.of("Updated"));
+        EventRequest updateRequest = new EventRequest("New Title", "New Description", LocalDateTime.of(2025, 6, 1, 12, 0), LocalDateTime.of(2025, 6, 1, 13, 0), "Brisbane", List.of("Updated"));
 
         mockMvc.perform(put("/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(updateRequest))).andExpect(status().isOk()).andExpect(jsonPath("$.title").value("New Title"));
     }

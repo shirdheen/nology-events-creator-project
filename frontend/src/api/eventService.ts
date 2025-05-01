@@ -1,6 +1,6 @@
 import { Event } from "../types/Event";
 
-const API_BASE = "http://localhost:8080/events";
+const API_BASE = "https://eventscreator-backend.azurewebsites.net/events";
 
 export const fetchEvents = async (
   label?: string,
