@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "../Calendar/Calendar.module.scss";
 import { Event } from "../../types/Event";
-import { formatDateKey } from "../../utils/date";
 import EventCard from "../EventCard/EventCard";
 
 interface DayViewProps {

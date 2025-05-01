@@ -17,11 +17,6 @@ const EventCard: React.FC<EventCardProps> = ({
   timeRange,
   showContinuousBadge,
 }) => {
-  const startTime = new Date(event.startDate).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
   return (
     <div
       className={`${styles.eventCard} ${className || ""}`}
