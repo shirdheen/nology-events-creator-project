@@ -1,0 +1,42 @@
+name: CI/CD for Spring Boot Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{runner.os}}-maven-${{hashFiles('**/pom.xml')}}
+          restore-keys: |
+            ${{runner.os}}-maven
+
+      - name: Run tests
+        run: mvn test --batch-mode
+
+      - name: Build project
+        run: mvn package -DskipTests --batch-mode
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: eventscreator-backend
+          slot-name: production
+          publish-profile: ${{secrets.AZURE_PUBLISH_PROFILE}}
+          package: target/*.jar
