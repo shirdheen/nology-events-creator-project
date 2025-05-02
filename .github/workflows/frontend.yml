@@ -26,6 +26,15 @@ jobs:
         run: npm run build
         working-directory: ./frontend
 
+      - name: Set Github token
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions-bot"
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
       - name: Deploy to Github Pages
         run: npm run deploy
         working-directory: ./frontend
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
