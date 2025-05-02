@@ -28,7 +28,7 @@ jobs:
             ${{runner.os}}-maven
 
       - name: Run tests
-        run: mvn test --batch-mode
+        run: ./mvnw test -Dspring.profiles.active=test
 
       - name: Build project
         run: mvn package -DskipTests --batch-mode
