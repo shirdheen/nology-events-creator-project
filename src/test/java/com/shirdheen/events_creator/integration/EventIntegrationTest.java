@@ -48,7 +48,7 @@ class EventIntegrationTest {
     @Test
     void shouldCreateAndFetchEvent() throws Exception {
         EventRequest eventRequest = new EventRequest("Integration Test Event", "Integration description",
-                LocalDateTime.of(2025, 5, 10, 14, 0), LocalDateTime.of(2025, 5, 10, 15, 0), "Melbourne",
+                LocalDateTime.of(2025, 5, 10, 14, 0), LocalDateTime.of(2025, 7, 10, 15, 0), "Melbourne",
                 List.of("Work"));
 
         mockMvc.perform(post("/events").contentType(MediaType.APPLICATION_JSON)
@@ -60,18 +60,18 @@ class EventIntegrationTest {
 
     @Test
     void shouldUpdateEvent() throws Exception {
-        Event event = Event.builder().title("Old Title").description("Old Description").startDate(LocalDateTime.of(2025,6,1,10,0)).endDate(LocalDateTime.of(2025, 6, 1, 11, 0)).location("Sydney").labels(List.of("Work")).build();
+        Event event = Event.builder().title("Old Title").description("Old Description").startDate(LocalDateTime.of(2025,8,1,10,0)).endDate(LocalDateTime.of(2025, 7, 1, 11, 0)).location("Sydney").labels(List.of("Work")).build();
 
         event = eventRepository.save(event);
 
-        EventRequest updateRequest = new EventRequest("New Title", "New Description", LocalDateTime.of(2025, 6, 1, 12, 0), LocalDateTime.of(2025, 6, 1, 13, 0), "Brisbane", List.of("Updated"));
+        EventRequest updateRequest = new EventRequest("New Title", "New Description", LocalDateTime.of(2025, 7, 1, 12, 0), LocalDateTime.of(2025, 7, 1, 13, 0), "Brisbane", List.of("Updated"));
 
         mockMvc.perform(put("/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(updateRequest))).andExpect(status().isOk()).andExpect(jsonPath("$.title").value("New Title"));
     }
 
     @Test
     void shouldDeleteEvent() throws Exception {
-        Event event = Event.builder().title("Delete Me").description("To be deleted").startDate(LocalDateTime.of(2025, 5, 5, 9, 0)).endDate(LocalDateTime.of(2025, 5, 5, 10, 0)).location("Remote").labels(List.of("Temp")).build();
+        Event event = Event.builder().title("Delete Me").description("To be deleted").startDate(LocalDateTime.of(2025, 8, 5, 9, 0)).endDate(LocalDateTime.of(2025, 7, 5, 10, 0)).location("Remote").labels(List.of("Temp")).build();
         event = eventRepository.save(event);
 
         mockMvc.perform(delete("/events/{id}", event.getId())).andExpect(status().isNoContent());
